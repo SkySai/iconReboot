@@ -1,5 +1,4 @@
 #!/bin/bash
-
 auth="admin:admin"
 PROGNAME=$(basename "$0")
 if [ "$#" -eq 1 ]; then
@@ -13,8 +12,8 @@ else
     echo "ipFile: specify filename with list of IPs"
     exit 1
 fi
-
-while IFS= read -r line
+sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba' $ipFile > temp
+while IFS="" read -r line || [ -n "$line" ]
 do
  ip=$line
  echo "AUTH is ${auth}"
@@ -24,5 +23,6 @@ do
  session=$( curl -s -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" http://$ip/rest/new | awk -F\" '/session/ { print $4 }' 2> /dev/null )
 # echo "SESSION is ${session}"
 
- curl -s -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" --data "{\"call\":\"SysAdmin_reboot\",\"params\": [\"scriptedReboot\"]}" http://${ip}/rest/request/${session} > /dev/null 
-done <"$ipFile"
+# curl -s -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" --data "{\"call\":\"SysAdmin_reboot\",\"params\": [\"scriptedReboot\"]}" http://${ip}/rest/request/${session} > /dev/null 
+done <"temp"
+rm temp
