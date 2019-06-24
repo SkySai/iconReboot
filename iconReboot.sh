@@ -16,15 +16,13 @@ fi
 
 while IFS= read -r line
 do
- echo "$line"
-
  ip=$line
  echo "AUTH is ${auth}"
  b64auth=$(echo -n ${auth} | base64)
  echo "IP is ${ip}"
 
- session=$( curl -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" http://$ip/rest/new | awk -F\" '/session/ { print $4 }' )
- echo "SESSION is ${session}"
+ session=$( curl -s -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" http://$ip/rest/new | awk -F\" '/session/ { print $4 }' 2> /dev/null )
+# echo "SESSION is ${session}"
 
- curl -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" --data "{\"call\":\"SysAdmin_reboot\",\"params\": [\"blips\"]}" http://${ip}/rest/request/${session} 
+ curl -s -H "Authorization: LSBasic ${b64auth}" -H "Content-Type: application/json" --data "{\"call\":\"SysAdmin_reboot\",\"params\": [\"scriptedReboot\"]}" http://${ip}/rest/request/${session} > /dev/null 
 done <"$ipFile"
