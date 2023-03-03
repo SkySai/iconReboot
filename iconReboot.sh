@@ -7,7 +7,7 @@ elif [ "$#" -eq 2 ]; then
     auth="admin:${1}"
     ipFile=$2
 else
-    echo "USAGE: setSipDetails [auth] ipFile"
+    echo "USAGE: iconReboot [auth] ipFile"
     echo "auth: specify username and password when non default (admin:admin) include the colon to separate the username from the password"
     echo "ipFile: specify filename with list of IPs"
     exit 1
